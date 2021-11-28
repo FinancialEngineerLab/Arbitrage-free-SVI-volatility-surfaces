@@ -10,15 +10,13 @@ def sviInit(dfi,df,n=100):
 
   #-------------------------------------------------------------------------#
   
-  # n is the number of initial values used for surface svi calibration
+  # n is the number of initial values used for surface SVI initial calibration
 
-  # ATM IV is calibrated using market IVs
+  # input is a dataframe which contains futures price, strike, maturity, implied volatility for a single underlying and for a single day
 
-  # input is a dataframe which contains futures price, strike, maturity, implied volatility for a single underlying and for a given day
+  # an initial calibration to all tenors (with randomly generated initial values) is applied for the initial values to calibrate each slice
 
-  # an initial calibration to all tenors (with randomly generated initial values) is used as the initial value for calibrating SSVI
-
-  # forward ATM total variance is based on a cubic spline fit
+  # forward ATM total variance is based on a linear fit at this stage
 
   #--------------------------------------------------------------------------#
 
@@ -105,13 +103,3 @@ def sviInit(dfi,df,n=100):
     res_final.set_index(res_final_index,inplace=True)
 
   return res_final
-
-# Parallel Computing groupby svi
-
-def applyParallel(dfGrouped,func,**kwargs):
-
-  # unpack kwargs which is a storage unit
-
-  rslt = Parallel(n_jobs=multiprocessing.cpu_count())(delayed(func)(name,group,**kwargs) for name, group in dfGrouped)
-
-  return pd.concat(rslt)
